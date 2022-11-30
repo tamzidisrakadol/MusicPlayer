@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.provider.MediaStore;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.musicplayer.Adapter.MusicListAdapter;
 import com.example.musicplayer.Model.MusicFiles;
 import com.example.musicplayer.R;
 import com.example.musicplayer.databinding.FragmentMusicListBinding;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 public class MusicList extends Fragment {
     FragmentMusicListBinding fragmentMusicListBinding;
     ArrayList<MusicFiles> musicFiles;
+    MusicListAdapter musicListAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,14 +49,20 @@ public class MusicList extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         runTimePermission();
+        musicListAdapter = new MusicListAdapter(getContext(),musicFiles);
+        fragmentMusicListBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
+        fragmentMusicListBinding.recyclerView.setAdapter(musicListAdapter);
     }
 
     private void runTimePermission() {
+        //to check permission
         Dexter.withContext(getContext())
                 .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                 .withListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+
+                        //read all audio files from phone
                         musicFiles = getAllAudio(getContext());
                     }
 
