@@ -29,7 +29,13 @@ android {
 }
 
 dependencies {
-
+    implementation 'com.intuit.sdp:sdp-android:1.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+    implementation 'com.karumi:dexter:6.2.3'
+    implementation "androidx.navigation:navigation-fragment:2.5.3"
+    implementation "androidx.navigation:navigation-ui:2.5.3"
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation "com.airbnb.android:lottie:3.4.0"
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
