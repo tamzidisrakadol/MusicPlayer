@@ -9,6 +9,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.provider.MediaStore;
@@ -16,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.musicplayer.Adapter.MusicListAdapter;
 import com.example.musicplayer.Model.MusicFiles;
@@ -33,7 +37,7 @@ import java.util.ArrayList;
 
 public class MusicList extends Fragment {
     FragmentMusicListBinding fragmentMusicListBinding;
-    ArrayList<MusicFiles> musicFiles;
+    static ArrayList<MusicFiles> musicFiles;
     MusicListAdapter musicListAdapter;
 
     @Override
@@ -47,7 +51,6 @@ public class MusicList extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         runTimePermission();
         musicListAdapter = new MusicListAdapter(getContext(),musicFiles);
         fragmentMusicListBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));

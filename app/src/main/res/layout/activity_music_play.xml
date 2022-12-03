@@ -5,41 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#3A3B3C"
-    tools:context=".Views.SongPlay">
+    tools:context=".Views.MusicPlay">
+
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circleImgView"
-        android:layout_width="321dp"
-        android:layout_height="265dp"
-        android:layout_marginTop="104dp"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="@dimen/_200sdp"
+        android:layout_marginTop="@dimen/_60sdp"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+
     <TextView
         android:id="@+id/durationTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="164dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="72dp"
         android:text="1:40"
         android:textColor="@color/white"
         android:textSize="@dimen/_15sdp"
-        app:layout_constraintStart_toStartOf="@+id/circleImgView"
-        app:layout_constraintTop_toBottomOf="@+id/circleImgView" />
+        app:layout_constraintStart_toStartOf="@+id/songSeekBar"
+        app:layout_constraintTop_toBottomOf="@+id/songNameTV" />
 
     <TextView
         android:id="@+id/songDurationTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="244dp"
-        android:layout_marginTop="164dp"
+        android:layout_marginTop="72dp"
+        android:layout_marginEnd="16dp"
         android:text="4:08"
         android:textColor="@color/white"
         android:textSize="@dimen/_15sdp"
-        app:layout_constraintStart_toEndOf="@+id/durationTv"
-        app:layout_constraintTop_toBottomOf="@+id/circleImgView" />
-
+        app:layout_constraintEnd_toEndOf="@+id/songSeekBar"
+        app:layout_constraintTop_toBottomOf="@+id/songNameTV" />
 
     <SeekBar
         android:id="@+id/songSeekBar"
@@ -80,10 +82,24 @@
         android:layout_height="@dimen/_50sdp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="44dp"
-        android:src="@drawable/next"
         android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/next"
         app:layout_constraintStart_toEndOf="@+id/playBtn"
         app:layout_constraintTop_toBottomOf="@+id/songSeekBar" />
 
+    <TextView
+        android:id="@+id/songNameTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="88dp"
+        android:fontFamily="@font/adamina"
+        android:maxLines="1"
+        android:text="Song Name"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_17sdp"
+        app:layout_constraintEnd_toEndOf="@+id/circleImgView"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="@+id/circleImgView"
+        app:layout_constraintTop_toBottomOf="@+id/circleImgView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

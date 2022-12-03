@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.musicplayer.Views.MusicList;
-import com.example.musicplayer.Views.SongPlay;
+import com.example.musicplayer.Views.Album;
 
 public class ViewPagerFragmentAdapter extends FragmentStateAdapter {
     private String[] titles ={"List","Song"};
@@ -22,7 +22,7 @@ public class ViewPagerFragmentAdapter extends FragmentStateAdapter {
             case 0:
                 return new MusicList();
             case 1:
-                return new SongPlay();
+                return new Album();
         }
         return new MusicList();
     }

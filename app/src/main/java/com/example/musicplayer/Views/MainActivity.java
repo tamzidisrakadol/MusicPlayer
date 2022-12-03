@@ -1,6 +1,7 @@
 package com.example.musicplayer.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 public class MainActivity extends AppCompatActivity {
-    ActivityMainBinding activityMainBinding;
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     ViewPagerFragmentAdapter viewPagerFragmentAdapter;

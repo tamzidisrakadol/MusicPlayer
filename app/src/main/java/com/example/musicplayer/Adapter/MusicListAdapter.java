@@ -1,10 +1,12 @@
 package com.example.musicplayer.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.musicplayer.Model.MusicFiles;
 import com.example.musicplayer.R;
+import com.example.musicplayer.Views.MusicPlay;
 import com.example.musicplayer.databinding.ListItemBinding;
 
 import java.util.List;
@@ -20,9 +23,11 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
     Context context;
     List<MusicFiles> musicFilesList;
 
+
     public MusicListAdapter(Context context, List<MusicFiles> musicFilesList) {
         this.context = context;
         this.musicFilesList = musicFilesList;
+
     }
 
     @NonNull
@@ -43,7 +48,14 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         }else{
        //     Glide.with(context).load(R.drawable.ic_launcher_foreground).into(holder.listItemBinding.listSongImg);
         }
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, MusicPlay.class);
+                intent.putExtra("position",position);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
