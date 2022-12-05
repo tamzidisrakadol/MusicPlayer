@@ -2,8 +2,14 @@ package com.example.musicplayer.Views;
 
 import static com.example.musicplayer.Views.MusicList.musicFiles;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
 
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.GradientDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -11,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.musicplayer.Model.MusicFiles;
@@ -28,6 +35,7 @@ public class MusicPlay extends AppCompatActivity {
     private Handler handler = new Handler();
     private Thread playThread,nextThread,prevThread;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +43,7 @@ public class MusicPlay extends AppCompatActivity {
         View view = activityMusicPlayBinding.getRoot();
         setContentView(view);
         getSupportActionBar().hide();
-        getIntentMethod();
+       getIntentMethod();
         activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
         activityMusicPlayBinding.songSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -262,12 +270,14 @@ public class MusicPlay extends AppCompatActivity {
             mediaPlayer.release();
             mediaPlayer = MediaPlayer.create(getApplicationContext(),uri);
             mediaPlayer.start();
-        }else{
+
+        }
+        else{
             mediaPlayer = MediaPlayer.create(getApplicationContext(),uri);
             mediaPlayer.start();
         }
         activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration()/1000);
-        metaData(uri);
+       metaData(uri);
     }
 
     private void metaData(Uri uri){
@@ -276,8 +286,35 @@ public class MusicPlay extends AppCompatActivity {
         int durationTotal = Integer.parseInt(listSong.get(position).getDuration())/1000;
         activityMusicPlayBinding.songDurationTv.setText(formattedTime(durationTotal));
         byte[] art = metadataRetriever.getEmbeddedPicture();
+        Bitmap bitmap;
         if (art !=null){
           Glide.with(this).asBitmap().load(art).into(activityMusicPlayBinding.circleImgView);
+          bitmap = BitmapFactory.decodeByteArray(art,0,art.length);
+          Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                @Override
+                public void onGenerated(@Nullable Palette palette) {
+                    Palette.Swatch swatch = palette.getDominantSwatch();
+                    if (swatch!=null){
+                        activityMusicPlayBinding.circleImgView.setBackgroundResource(R.drawable.gradient);
+                        activityMusicPlayBinding.constraintLayout.setBackgroundResource(R.drawable.container_bg);
+                        GradientDrawable gradientDrawable =new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[]{swatch.getRgb(),0x00000000});
+                        activityMusicPlayBinding.circleImgView.setBackground(gradientDrawable);
+                        GradientDrawable gradientDrawable2 =new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[]{swatch.getRgb(),swatch.getRgb()});
+                        activityMusicPlayBinding.constraintLayout.setBackground(gradientDrawable2);
+                    }else{
+                        activityMusicPlayBinding.circleImgView.setBackgroundResource(R.drawable.gradient);
+                        activityMusicPlayBinding.constraintLayout.setBackgroundResource(R.drawable.container_bg);
+                        GradientDrawable gradientDrawable =new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[]{0xff000000,0x00000000});
+                        activityMusicPlayBinding.circleImgView.setBackground(gradientDrawable);
+                        GradientDrawable gradientDrawable2 =new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                                new int[]{0xff000000,0xff000000});
+                        activityMusicPlayBinding.constraintLayout.setBackground(gradientDrawable2);
+                    }
+                }
+            });
         }
     }
 }

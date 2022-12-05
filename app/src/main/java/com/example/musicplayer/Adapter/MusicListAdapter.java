@@ -17,11 +17,12 @@ import com.example.musicplayer.R;
 import com.example.musicplayer.Views.MusicPlay;
 import com.example.musicplayer.databinding.ListItemBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.ViewHolder>{
     Context context;
-    List<MusicFiles> musicFilesList;
+    List<MusicFiles> musicFilesList = new ArrayList<>();
 
 
     public MusicListAdapter(Context context, List<MusicFiles> musicFilesList) {
