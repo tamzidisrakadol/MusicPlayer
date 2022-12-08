@@ -22,13 +22,12 @@ import java.util.List;
 
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.ViewHolder>{
     Context context;
-    List<MusicFiles> musicFilesList = new ArrayList<>();
+    List<MusicFiles> musicFilesList;
 
 
     public MusicListAdapter(Context context, List<MusicFiles> musicFilesList) {
         this.context = context;
         this.musicFilesList = musicFilesList;
-
     }
 
     @NonNull
