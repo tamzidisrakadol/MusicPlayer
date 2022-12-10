@@ -1,33 +1,30 @@
 package com.example.musicplayer.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.musicplayer.Model.MusicFiles;
-import com.example.musicplayer.R;
-import com.example.musicplayer.Views.MusicPlay;
 import com.example.musicplayer.databinding.ListItemBinding;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.ViewHolder>{
     Context context;
-    List<MusicFiles> musicFilesList;
+    List<MusicFiles> mFileList;
+    OnClickItem onClickItem;
 
 
-    public MusicListAdapter(Context context, List<MusicFiles> musicFilesList) {
+    public MusicListAdapter(Context context, List<MusicFiles> musicFilesList,OnClickItem onClickItem) {
         this.context = context;
-        this.musicFilesList = musicFilesList;
+        this.mFileList = musicFilesList;
+        this.onClickItem = onClickItem;
     }
 
     @NonNull
@@ -40,7 +37,7 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        MusicFiles musicFiles = musicFilesList.get(position);
+        MusicFiles musicFiles = mFileList.get(position);
         holder.listItemBinding.listSongNameTV.setText(musicFiles.getTitle());
         byte[] img = getAlbumArt(musicFiles.getPath());
         if (img!=null){
@@ -48,19 +45,19 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         }else{
        //     Glide.with(context).load(R.drawable.ic_launcher_foreground).into(holder.listItemBinding.listSongImg);
         }
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, MusicPlay.class);
-                intent.putExtra("position",position);
-                context.startActivity(intent);
-            }
-        });
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(context, MusicPlay.class);
+//                intent.putExtra("position",position);
+//                context.startActivity(intent);
+//            }
+//        });
     }
 
     @Override
     public int getItemCount() {
-        return musicFilesList.size();
+        return mFileList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
@@ -68,6 +65,12 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         public ViewHolder(ListItemBinding listItemBinding) {
             super(listItemBinding.getRoot());
             this.listItemBinding =listItemBinding;
+            this.listItemBinding.listSongNameTV.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickItem.onItemClick(getAdapterPosition());
+                }
+            });
         }
     }
 

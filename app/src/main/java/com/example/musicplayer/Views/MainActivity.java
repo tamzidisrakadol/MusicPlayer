@@ -4,21 +4,35 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.Manifest;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 
 import com.example.musicplayer.Adapter.ViewPagerFragmentAdapter;
+import com.example.musicplayer.Model.MusicFiles;
 import com.example.musicplayer.R;
 import com.example.musicplayer.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionDeniedResponse;
+import com.karumi.dexter.listener.PermissionGrantedResponse;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
+    static ArrayList<MusicFiles> musicFiles = new ArrayList<>();
     ViewPagerFragmentAdapter viewPagerFragmentAdapter;
     private final String[] titles = new String[]{"List","Song"};
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +41,59 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         tabLayout = findViewById(R.id.tabLayout);
         viewPager2 = findViewById(R.id.viewPager);
+        runTimePermission();
         viewPagerFragmentAdapter = new ViewPagerFragmentAdapter(this);
         viewPager2.setAdapter(viewPagerFragmentAdapter);
         new TabLayoutMediator(tabLayout,viewPager2,((tab, position) -> tab.setText(titles[position]))).attach();
+    }
+
+    private void runTimePermission() {
+        //to check permission
+        Dexter.withContext(this)
+                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                .withListener(new PermissionListener() {
+                    @Override
+                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+                        //read all audio files from phone
+                        musicFiles = getAllAudio(MainActivity.this);
+                    }
+                    @Override
+                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
+
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
+                        permissionToken.continuePermissionRequest();
+                    }
+                }).check();
+    }
+
+    public static ArrayList<MusicFiles> getAllAudio(Context context){
+        ArrayList<MusicFiles> tempAudioFile = new ArrayList<>();
+        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String[] projection= {
+                MediaStore.Audio.Media.ALBUM,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.DURATION,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.ARTIST,
+        };
+        Cursor cursor = context.getContentResolver().query(uri,projection,null,null,null);
+        if (cursor!=null){
+            while (cursor.moveToNext()){
+                String album = cursor.getString(0);
+                String title= cursor.getString(1);
+                String duration = cursor.getString(2);
+                String path = cursor.getString(3);
+                String artist = cursor.getString(4);
+
+                MusicFiles musicFiles = new MusicFiles(path,title,artist,album,duration);
+                Log.e("Path : "+ path,"Album :"+ album );
+                tempAudioFile.add(musicFiles);
+            }
+            cursor.close();
+        }
+        return tempAudioFile;
     }
 }

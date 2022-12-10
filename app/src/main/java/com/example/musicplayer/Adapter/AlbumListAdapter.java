@@ -35,7 +35,7 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         MusicFiles  musicFiles = musicFilesList2.get(position);
-        holder.albumItemLayoutBinding.albumNameTV.setText(musicFiles.getTitle());
+        holder.albumItemLayoutBinding.albumNameTV.setText(musicFiles.getAlbum());
         byte[] img = getAlbumArt(musicFiles.getPath());
         if (img!=null){
             Glide.with(context).asBitmap().load(img).into(holder.albumItemLayoutBinding.albumImg    );

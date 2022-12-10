@@ -1,6 +1,8 @@
 package com.example.musicplayer.Views;
 
-import static com.example.musicplayer.Views.MusicList.musicFiles;
+
+
+import static com.example.musicplayer.Views.MainActivity.musicFiles;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
