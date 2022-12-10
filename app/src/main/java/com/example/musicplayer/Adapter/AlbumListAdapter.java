@@ -18,10 +18,12 @@ import java.util.List;
 public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.ViewHolder> {
     Context context;
     List<MusicFiles> musicFilesList2;
+    OnClickItem  onClickItem;
 
-    public AlbumListAdapter(Context context, List<MusicFiles> musicFilesList) {
+    public AlbumListAdapter(Context context, List<MusicFiles> musicFilesList,OnClickItem onClickItem) {
         this.context = context;
         this.musicFilesList2 = musicFilesList;
+        this.onClickItem = onClickItem;
     }
 
     @NonNull
@@ -38,7 +40,7 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.View
         holder.albumItemLayoutBinding.albumNameTV.setText(musicFiles.getAlbum());
         byte[] img = getAlbumArt(musicFiles.getPath());
         if (img!=null){
-            Glide.with(context).asBitmap().load(img).into(holder.albumItemLayoutBinding.albumImg    );
+            Glide.with(context).asBitmap().load(img).into(holder.albumItemLayoutBinding.albumImg);
         }else{
             //     Glide.with(context).load(R.drawable.ic_launcher_foreground).into(holder.listItemBinding.listSongImg);
         }
@@ -55,6 +57,12 @@ public class AlbumListAdapter extends RecyclerView.Adapter<AlbumListAdapter.View
         public ViewHolder(AlbumItemLayoutBinding albumItemLayoutBinding) {
             super(albumItemLayoutBinding.getRoot());
             this.albumItemLayoutBinding = albumItemLayoutBinding;
+            this.albumItemLayoutBinding.albumImg.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickItem.onItemClick(getAdapterPosition());
+                }
+            });
         }
     }
 

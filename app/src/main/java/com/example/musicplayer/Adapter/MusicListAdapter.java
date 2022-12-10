@@ -45,14 +45,6 @@ public class MusicListAdapter extends RecyclerView.Adapter<MusicListAdapter.View
         }else{
        //     Glide.with(context).load(R.drawable.ic_launcher_foreground).into(holder.listItemBinding.listSongImg);
         }
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(context, MusicPlay.class);
-//                intent.putExtra("position",position);
-//                context.startActivity(intent);
-//            }
-//        });
     }
 
     @Override
