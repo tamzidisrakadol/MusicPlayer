@@ -49,7 +49,11 @@ public class AlbumDetails extends AppCompatActivity implements OnClickItem {
     @Override
     protected void onResume() {
         super.onResume();
-
+        if (!(albumFiles.size()<1)){
+            albumDetailsAdapter = new AlbumDetailsAdapter(this,albumFiles,this);
+            activityAlbumDetailsBinding.albumDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL,false));
+            activityAlbumDetailsBinding.albumDetailsRecyclerView.setAdapter(albumDetailsAdapter);
+        }
     }
 
     private byte[] getAlbumArt(String uri){
