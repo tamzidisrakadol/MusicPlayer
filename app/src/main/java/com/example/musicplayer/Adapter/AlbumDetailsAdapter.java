@@ -17,7 +17,7 @@ import java.util.List;
 
 public class AlbumDetailsAdapter extends RecyclerView.Adapter<AlbumDetailsAdapter.Viewholder>{
     Context context;
-    List<MusicFiles> albumMusicFilesList;
+    public static List<MusicFiles> albumMusicFilesList;
     OnClickItem onClickItem;
 
     public AlbumDetailsAdapter(Context context, List<MusicFiles> musicFilesList,OnClickItem onClickItem) {

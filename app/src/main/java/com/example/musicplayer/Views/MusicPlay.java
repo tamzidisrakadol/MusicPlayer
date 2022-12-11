@@ -2,6 +2,7 @@ package com.example.musicplayer.Views;
 
 
 
+import static com.example.musicplayer.Adapter.AlbumDetailsAdapter.albumMusicFilesList;
 import static com.example.musicplayer.Views.MainActivity.musicFiles;
 
 import androidx.annotation.Nullable;
@@ -307,7 +308,12 @@ public class MusicPlay extends AppCompatActivity {
 
     private void getIntentMethod() {
         position = getIntent().getIntExtra("position", -1);
-        listSong = musicFiles;
+        String sender = getIntent().getStringExtra("sender");
+        if (sender!=null && sender.equals("albumDetails")){
+            listSong = (ArrayList<MusicFiles>) albumMusicFilesList;
+        }else{
+            listSong = musicFiles;
+        }
         if (listSong != null) {
             activityMusicPlayBinding.playBtn.setImageResource(R.drawable.pause);
             uri = Uri.parse(listSong.get(position).getPath());

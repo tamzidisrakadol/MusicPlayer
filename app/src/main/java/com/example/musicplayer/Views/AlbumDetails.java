@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
 import android.view.View;
@@ -66,6 +67,9 @@ public class AlbumDetails extends AppCompatActivity implements OnClickItem {
 
     @Override
     public void onItemClick(int position) {
-
+        Intent intent = new Intent(AlbumDetails.this,MusicPlay.class);
+        intent.putExtra("sender","albumDetails");
+        intent.putExtra("position",position);
+        startActivity(intent);
     }
 }
