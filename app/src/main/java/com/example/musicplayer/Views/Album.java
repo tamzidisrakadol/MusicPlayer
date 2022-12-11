@@ -2,6 +2,7 @@ package com.example.musicplayer.Views;
 
 
 
+import static com.example.musicplayer.Views.MainActivity.albums;
 import static com.example.musicplayer.Views.MainActivity.musicFiles;
 
 import android.content.Intent;
@@ -42,7 +43,7 @@ public class Album extends Fragment implements OnClickItem {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        albumListAdapter = new AlbumListAdapter(getContext(),musicFiles,this);
+        albumListAdapter = new AlbumListAdapter(getContext(),albums,this);
         fragmentSongPlayBinding.albumRecyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
         fragmentSongPlayBinding.albumRecyclerView.setAdapter(albumListAdapter);
         fragmentSongPlayBinding.albumRecyclerView.addItemDecoration(new DividerItemDecoration(requireActivity(),DividerItemDecoration.HORIZONTAL));

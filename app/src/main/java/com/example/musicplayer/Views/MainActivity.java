@@ -1,7 +1,6 @@
 package com.example.musicplayer.Views;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
@@ -15,7 +14,6 @@ import android.util.Log;
 import com.example.musicplayer.Adapter.ViewPagerFragmentAdapter;
 import com.example.musicplayer.Model.MusicFiles;
 import com.example.musicplayer.R;
-import com.example.musicplayer.databinding.ActivityMainBinding;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.karumi.dexter.Dexter;
@@ -31,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager2 viewPager2;
     static ArrayList<MusicFiles> musicFiles = new ArrayList<>();
+    static ArrayList<MusicFiles> albums = new ArrayList<>();
     ViewPagerFragmentAdapter viewPagerFragmentAdapter;
     private final String[] titles = new String[]{"List","Song"};
 
@@ -71,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static ArrayList<MusicFiles> getAllAudio(Context context){
         ArrayList<MusicFiles> tempAudioFile = new ArrayList<>();
+        ArrayList<String> duplicate = new ArrayList<>();
         Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
         String[] projection= {
                 MediaStore.Audio.Media.ALBUM,
@@ -91,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
                 MusicFiles musicFiles = new MusicFiles(path,title,artist,album,duration);
                 Log.e("Path : "+ path,"Album :"+ album );
                 tempAudioFile.add(musicFiles);
+                if (!duplicate.contains(album)){
+                    albums.add(musicFiles);
+                    duplicate.add(album);
+
+                }
             }
             cursor.close();
         }
