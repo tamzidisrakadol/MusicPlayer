@@ -12,6 +12,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/listen"
         android:label="MUSIC ON"
+        android:name=".services.ApplicationClass"
         android:roundIcon="@drawable/listen"
         android:supportsRtl="true"
         android:theme="@style/Theme.MusicPlayer"
@@ -44,6 +45,8 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <service android:name="com.example.musicplayer.services.MusicService" android:enabled="true"/>
     </application>
 
 </manifest>

@@ -10,6 +10,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.palette.graphics.Palette;
 
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.GradientDrawable;
@@ -18,19 +21,23 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.musicplayer.Adapter.ActionPlaying;
 import com.example.musicplayer.Model.MusicFiles;
 import com.example.musicplayer.R;
 import com.example.musicplayer.databinding.ActivityMusicPlayBinding;
+import com.example.musicplayer.services.MusicService;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MusicPlay extends AppCompatActivity {
+public class MusicPlay extends AppCompatActivity implements ActionPlaying, ServiceConnection {
     ActivityMusicPlayBinding activityMusicPlayBinding;
     ArrayList<MusicFiles> listSong = new ArrayList<>();
     int position = -1;
@@ -39,6 +46,7 @@ public class MusicPlay extends AppCompatActivity {
     private Handler handler = new Handler();
     private Thread playThread, nextThread, prevThread;
     static boolean shuffleBoolean = false, repeatBoolean = false;
+    MusicService musicService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +54,13 @@ public class MusicPlay extends AppCompatActivity {
         activityMusicPlayBinding = ActivityMusicPlayBinding.inflate(getLayoutInflater());
         View view = activityMusicPlayBinding.getRoot();
         setContentView(view);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getSupportActionBar().hide();
         getIntentMethod();
         activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
+        activityMusicPlayBinding.songNameTV.setSelected(true);
+        activityMusicPlayBinding.backImgBtn.setOnClickListener(v -> onBackPressed());
         activityMusicPlayBinding.songSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -101,10 +113,18 @@ public class MusicPlay extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Intent intent  = new Intent(this,MusicService.class);
+        bindService(intent,this,BIND_AUTO_CREATE);
         playThreadBtn();
         nextThreadBtn();
         prevThreadBtn();
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(this);
     }
 
     private void prevThreadBtn() {
@@ -112,67 +132,70 @@ public class MusicPlay extends AppCompatActivity {
             @Override
             public void run() {
                 super.run();
-                activityMusicPlayBinding.prevBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mediaPlayer.isPlaying()) {
-                            mediaPlayer.stop();
-                            mediaPlayer.release();
-                            if (shuffleBoolean && !repeatBoolean){
-                                position = getRandom(listSong.size()-1);
-                            }else if(!shuffleBoolean && !repeatBoolean){
-                               // position = ((position + 1) % listSong.size());
-                                position = ((position - 1) < 0 ? (listSong.size() - 1) : (position - 1));
-                            }
-
-                            uri = Uri.parse(listSong.get(position).getPath());
-                            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-                            metaData(uri);
-                            activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
-                            activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
-                            MusicPlay.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mediaPlayer != null) {
-                                        int currentPos = mediaPlayer.getCurrentPosition() / 1000;
-                                        activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
-                                    }
-                                    handler.postDelayed(this, 1000);
-                                }
-                            });
-                            activityMusicPlayBinding.playBtn.setImageResource(R.drawable.pause);
-                            mediaPlayer.start();
-                        } else {
-                            mediaPlayer.stop();
-                            mediaPlayer.release();
-                            if (shuffleBoolean && !repeatBoolean){
-                                position = getRandom(listSong.size()-1);
-                            }else if(!shuffleBoolean && !repeatBoolean){
-                                // position = ((position + 1) % listSong.size());
-                                position = ((position - 1) < 0 ? (listSong.size() - 1) : (position - 1));
-                            }
-                            uri = Uri.parse(listSong.get(position).getPath());
-                            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-                            metaData(uri);
-                            activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
-                            activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
-                            MusicPlay.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mediaPlayer != null) {
-                                        int currentPos = mediaPlayer.getCurrentPosition() / 1000;
-                                        activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
-                                    }
-                                    handler.postDelayed(this, 1000);
-                                }
-                            });
-                            activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
-                        }
-                    }
-                });
+                btn_prev();
             }
         };
         prevThread.start();
+    }
+    public void btn_prev(){
+        activityMusicPlayBinding.prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    if (shuffleBoolean && !repeatBoolean){
+                        position = getRandom(listSong.size()-1);
+                    }else if(!shuffleBoolean && !repeatBoolean){
+                        // position = ((position + 1) % listSong.size());
+                        position = ((position - 1) < 0 ? (listSong.size() - 1) : (position - 1));
+                    }
+
+                    uri = Uri.parse(listSong.get(position).getPath());
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+                    metaData(uri);
+                    activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
+                    activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
+                    MusicPlay.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mediaPlayer != null) {
+                                int currentPos = mediaPlayer.getCurrentPosition() / 1000;
+                                activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
+                            }
+                            handler.postDelayed(this, 1000);
+                        }
+                    });
+                    activityMusicPlayBinding.playBtn.setImageResource(R.drawable.pause);
+                    mediaPlayer.start();
+                } else {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    if (shuffleBoolean && !repeatBoolean){
+                        position = getRandom(listSong.size()-1);
+                    }else if(!shuffleBoolean && !repeatBoolean){
+                        // position = ((position + 1) % listSong.size());
+                        position = ((position - 1) < 0 ? (listSong.size() - 1) : (position - 1));
+                    }
+                    uri = Uri.parse(listSong.get(position).getPath());
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+                    metaData(uri);
+                    activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
+                    activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
+                    MusicPlay.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mediaPlayer != null) {
+                                int currentPos = mediaPlayer.getCurrentPosition() / 1000;
+                                activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
+                            }
+                            handler.postDelayed(this, 1000);
+                        }
+                    });
+                    activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
+                }
+            }
+        });
     }
 
     private void nextThreadBtn() {
@@ -180,65 +203,69 @@ public class MusicPlay extends AppCompatActivity {
             @Override
             public void run() {
                 super.run();
-                activityMusicPlayBinding.nextBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mediaPlayer.isPlaying()) {
-                            mediaPlayer.stop();
-                            mediaPlayer.release();
-                            if (shuffleBoolean && !repeatBoolean){
-                                position = getRandom(listSong.size()-1);
-                            }else if(!shuffleBoolean && !repeatBoolean){
-                                position = ((position + 1) % listSong.size());
-                            }
-                            uri = Uri.parse(listSong.get(position).getPath());
-                            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-                            metaData(uri);
-                            activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
-                            activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
-                            MusicPlay.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mediaPlayer != null) {
-                                        int currentPos = mediaPlayer.getCurrentPosition() / 1000;
-                                        activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
-                                    }
-                                    handler.postDelayed(this, 1000);
-                                }
-                            });
-                            activityMusicPlayBinding.playBtn.setImageResource(R.drawable.pause);
-                            mediaPlayer.start();
-                        } else {
-                            mediaPlayer.stop();
-                            mediaPlayer.release();
-                            if (shuffleBoolean && !repeatBoolean){
-                                position = getRandom(listSong.size()-1);
-                            }else if(!shuffleBoolean && !repeatBoolean){
-                                position = ((position + 1) % listSong.size());
-                            }
-                            uri = Uri.parse(listSong.get(position).getPath());
-                            mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
-                            metaData(uri);
-                            activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
-                            activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
-                            MusicPlay.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mediaPlayer != null) {
-                                        int currentPos = mediaPlayer.getCurrentPosition() / 1000;
-                                        activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
-                                    }
-                                    handler.postDelayed(this, 1000);
-                                }
-                            });
-                            activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
-                        }
-                    }
-                });
+               btn_next();
             }
         };
         nextThread.start();
     }
+    public void btn_next(){
+        activityMusicPlayBinding.nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    if (shuffleBoolean && !repeatBoolean){
+                        position = getRandom(listSong.size()-1);
+                    }else if(!shuffleBoolean && !repeatBoolean){
+                        position = ((position + 1) % listSong.size());
+                    }
+                    uri = Uri.parse(listSong.get(position).getPath());
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+                    metaData(uri);
+                    activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
+                    activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
+                    MusicPlay.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mediaPlayer != null) {
+                                int currentPos = mediaPlayer.getCurrentPosition() / 1000;
+                                activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
+                            }
+                            handler.postDelayed(this, 1000);
+                        }
+                    });
+                    activityMusicPlayBinding.playBtn.setImageResource(R.drawable.pause);
+                    mediaPlayer.start();
+                } else {
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    if (shuffleBoolean && !repeatBoolean){
+                        position = getRandom(listSong.size()-1);
+                    }else if(!shuffleBoolean && !repeatBoolean){
+                        position = ((position + 1) % listSong.size());
+                    }
+                    uri = Uri.parse(listSong.get(position).getPath());
+                    mediaPlayer = MediaPlayer.create(getApplicationContext(), uri);
+                    metaData(uri);
+                    activityMusicPlayBinding.songNameTV.setText(listSong.get(position).getTitle());
+                    activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
+                    MusicPlay.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mediaPlayer != null) {
+                                int currentPos = mediaPlayer.getCurrentPosition() / 1000;
+                                activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
+                            }
+                            handler.postDelayed(this, 1000);
+                        }
+                    });
+                    activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
+                }
+            }
+        });
+    }
+
 
     private int getRandom(int i) {
         Random  random = new Random();
@@ -251,44 +278,47 @@ public class MusicPlay extends AppCompatActivity {
             @Override
             public void run() {
                 super.run();
-                activityMusicPlayBinding.playBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mediaPlayer.isPlaying()) {
-                            activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
-                            mediaPlayer.pause();
-                            activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
-                            MusicPlay.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mediaPlayer != null) {
-                                        int currentPos = mediaPlayer.getCurrentPosition() / 1000;
-                                        activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
-                                    }
-                                    handler.postDelayed(this, 1000);
-                                }
-                            });
-                        } else {
-                            activityMusicPlayBinding.playBtn.setImageResource(R.drawable.pause);
-                            mediaPlayer.start();
-                            activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
-                            MusicPlay.this.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (mediaPlayer != null) {
-                                        int currentPos = mediaPlayer.getCurrentPosition() / 1000;
-                                        activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
-                                    }
-                                    handler.postDelayed(this, 1000);
-                                }
-                            });
-                        }
-                    }
-                });
+                btn_play();
 
             }
         };
         playThread.start();
+    }
+    public void btn_play(){
+        activityMusicPlayBinding.playBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mediaPlayer.isPlaying()) {
+                    activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
+                    mediaPlayer.pause();
+                    activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
+                    MusicPlay.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mediaPlayer != null) {
+                                int currentPos = mediaPlayer.getCurrentPosition() / 1000;
+                                activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
+                            }
+                            handler.postDelayed(this, 1000);
+                        }
+                    });
+                } else {
+                    activityMusicPlayBinding.playBtn.setImageResource(R.drawable.pause);
+                    mediaPlayer.start();
+                    activityMusicPlayBinding.songSeekBar.setMax(mediaPlayer.getDuration() / 1000);
+                    MusicPlay.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (mediaPlayer != null) {
+                                int currentPos = mediaPlayer.getCurrentPosition() / 1000;
+                                activityMusicPlayBinding.songSeekBar.setProgress(currentPos);
+                            }
+                            handler.postDelayed(this, 1000);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private String formattedTime(int currentPosition) {
@@ -368,5 +398,18 @@ public class MusicPlay extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
+        musicService = myBinder.getService();
+        Toast.makeText(this, "Connected"+musicService, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        musicService = null;
+
     }
 }
