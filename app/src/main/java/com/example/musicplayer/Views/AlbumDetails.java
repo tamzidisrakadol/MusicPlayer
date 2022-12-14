@@ -17,6 +17,7 @@ import com.example.musicplayer.Adapter.OnClickItem;
 import com.example.musicplayer.Model.MusicFiles;
 import com.example.musicplayer.databinding.ActivityAlbumDetailsBinding;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -61,7 +62,11 @@ public class AlbumDetails extends AppCompatActivity implements OnClickItem {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(uri.toString());
         byte[] art = mediaMetadataRetriever.getEmbeddedPicture();
-        mediaMetadataRetriever.release();
+        try {
+            mediaMetadataRetriever.release();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return art;
     }
 

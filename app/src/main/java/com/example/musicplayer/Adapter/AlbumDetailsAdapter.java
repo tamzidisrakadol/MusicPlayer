@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.example.musicplayer.Model.MusicFiles;
 import com.example.musicplayer.databinding.AlbumDetailsItemBinding;
 
+import java.io.IOException;
 import java.util.List;
 
 public class AlbumDetailsAdapter extends RecyclerView.Adapter<AlbumDetailsAdapter.Viewholder>{
@@ -54,7 +55,11 @@ public class AlbumDetailsAdapter extends RecyclerView.Adapter<AlbumDetailsAdapte
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(uri.toString());
         byte[] art = mediaMetadataRetriever.getEmbeddedPicture();
-        mediaMetadataRetriever.release();
+        try {
+            mediaMetadataRetriever.release();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return art;
     }
 
