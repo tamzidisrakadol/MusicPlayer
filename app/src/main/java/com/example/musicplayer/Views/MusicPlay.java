@@ -4,12 +4,19 @@ package com.example.musicplayer.Views;
 
 import static com.example.musicplayer.Adapter.AlbumDetailsAdapter.albumMusicFilesList;
 import static com.example.musicplayer.Views.MainActivity.musicFiles;
+import static com.example.musicplayer.services.ApplicationClass.ACTION_NEXT;
+import static com.example.musicplayer.services.ApplicationClass.ACTION_PLAY;
+import static com.example.musicplayer.services.ApplicationClass.ACTION_PREVIOUS;
+import static com.example.musicplayer.services.ApplicationClass.CHANNEL_ID_2;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.palette.graphics.Palette;
 
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -18,6 +25,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.GradientDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,16 +41,16 @@ import com.example.musicplayer.Model.MusicFiles;
 import com.example.musicplayer.R;
 import com.example.musicplayer.databinding.ActivityMusicPlayBinding;
 import com.example.musicplayer.services.MusicService;
+import com.example.musicplayer.services.NotificationReciever;
 
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MusicPlay extends AppCompatActivity implements ActionPlaying, ServiceConnection,MediaPlayer.OnCompletionListener{
+public class MusicPlay extends AppCompatActivity implements ActionPlaying, ServiceConnection{
     ActivityMusicPlayBinding activityMusicPlayBinding;
     public static ArrayList<MusicFiles> listSong = new ArrayList<>();
     int position = -1;
     Uri uri;
-
     private Handler handler = new Handler();
     private Thread playThread, nextThread, prevThread;
     static boolean shuffleBoolean = false, repeatBoolean = false;
@@ -412,14 +420,39 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
         musicService = null;
 
     }
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        btn_next();
-        if (musicService != null){
-            musicService.createMediaPlayer(position);
-            musicService.onStart();
-            musicService.onCompleted();
+    void showNotification(int playPause){
+        Intent intent = new Intent(this,MusicPlay.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this,0,intent,0);
+        Intent prevIntent = new Intent(this, NotificationReciever.class).setAction(ACTION_PREVIOUS);
+        PendingIntent prevPending = PendingIntent.getBroadcast(this,0,prevIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent pauseIntent = new Intent(this, NotificationReciever.class).setAction(ACTION_PLAY);
+        PendingIntent pausePending = PendingIntent.getBroadcast(this,0,pauseIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent nextIntent = new Intent(this, NotificationReciever.class).setAction(ACTION_NEXT);
+        PendingIntent nextPending = PendingIntent.getBroadcast(this,0,nextIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        byte[] picture = null;
+        picture = getAlbumArt(musicFiles.get(position).getPath());
+        Bitmap thumb = null;
+        if (picture != null){
+            thumb = BitmapFactory.decodeByteArray(picture,0,picture.length);
         }
+//        Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID_2)
+//                .setSmallIcon(playPause)
+//                .setLargeIcon(thumb)
+//                .setContentTitle(musicFiles.get(position).getTitle())
+//                .addAction(R.drawable.prev,"previous",prevPending)
+//                .addAction(playPause,"play",prevPending)
+//                .addAction(R.drawable.next,"next",nextPending)
+//                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle())
+//                .
+
     }
+    private byte[] getAlbumArt(String uri){
+        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+        mediaMetadataRetriever.setDataSource(uri.toString());
+        byte[] art = mediaMetadataRetriever.getEmbeddedPicture();
+        mediaMetadataRetriever.release();
+        return art;
+    }
+
+
 }
