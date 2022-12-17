@@ -432,6 +432,7 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
     public void onServiceConnected(ComponentName name, IBinder service) {
         MusicService.MyBinder myBinder = (MusicService.MyBinder) service;
         musicService = myBinder.getService();
+        musicService.setCallback(this);
         Toast.makeText(this, "Connected"+musicService, Toast.LENGTH_SHORT).show();
         activityMusicPlayBinding.songSeekBar.setMax(musicService.getDuration() / 1000);
         metaData(uri);
@@ -458,8 +459,10 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
         PendingIntent pausePending = PendingIntent.getBroadcast(this,0,pauseIntent,PendingIntent.FLAG_IMMUTABLE);
         Intent nextIntent = new Intent(this, NotificationReciever.class).setAction(ACTION_NEXT);
         PendingIntent nextPending = PendingIntent.getBroadcast(this,0,nextIntent,PendingIntent.FLAG_IMMUTABLE);
+
+
         byte[] picture = null;
-        picture = getAlbumArt(musicFiles.get(position).getPath());
+        picture = getAlbumArt(listSong.get(position).getPath());
         Bitmap thumb = null;
         if (picture != null){
             thumb = BitmapFactory.decodeByteArray(picture,0,picture.length);
@@ -467,9 +470,9 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
         Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID_2)
                 .setSmallIcon(playPause)
                 .setLargeIcon(thumb)
-                .setContentTitle(musicFiles.get(position).getTitle())
+                .setContentTitle(listSong.get(position).getTitle())
                 .addAction(R.drawable.prev,"previous",prevPending)
-                .addAction(playPause,"play",prevPending)
+                .addAction(playPause,"play",pausePending)
                 .addAction(R.drawable.next,"next",nextPending)
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSessionCompat.getSessionToken()))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

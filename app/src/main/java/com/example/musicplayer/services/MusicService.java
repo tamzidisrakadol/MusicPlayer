@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.widget.Switch;
 
 import androidx.annotation.Nullable;
 
@@ -48,9 +49,32 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         int myPos = intent.getIntExtra("servicePosition",-1);
+        String actionName = intent.getStringExtra("ActionName");
         if (myPos != -1){
             playMedia(myPos);
         }
+        if (actionName!=null){
+            switch (actionName){
+                case "playPause":
+                    if (actionName!=null){
+                        actionPlaying.btn_play();
+                    }
+                    break;
+
+                case "next":
+                    if (actionName!=null){
+                        actionPlaying.btn_next();
+                    }
+                    break;
+
+                case "prev":
+                    if (actionName!=null){
+                        actionPlaying.btn_prev();
+                    }
+                    break;
+            }
+        }
+
         return START_STICKY;
     }
 
@@ -114,6 +138,9 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         createMediaPlayer(position);
         mediaPlayer.start();
         onCompleted();
+    }
+    public void setCallback(ActionPlaying actionPlaying){
+        this.actionPlaying = actionPlaying;
     }
 
 }
