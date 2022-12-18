@@ -21,14 +21,16 @@ public class NotificationReciever extends BroadcastReceiver {
                     serviceIntent.putExtra("ActionName","playPause");
                     context.startService(serviceIntent);
                     break;
+
                 case ACTION_NEXT:
                     Toast.makeText(context, "next", Toast.LENGTH_SHORT).show();
                     serviceIntent.putExtra("ActionName","next");
                     context.startService(serviceIntent);
                     break;
+
                 case ACTION_PREVIOUS:
                     Toast.makeText(context, "prev", Toast.LENGTH_SHORT).show();
-                    serviceIntent.putExtra("ActionName","prev");
+                    serviceIntent.putExtra("ActionName","previous");
                     context.startService(serviceIntent);
                     break;
             }

@@ -1,7 +1,5 @@
 package com.example.musicplayer.Views;
 
-
-
 import static com.example.musicplayer.Adapter.AlbumDetailsAdapter.albumMusicFilesList;
 import static com.example.musicplayer.Views.MainActivity.musicFiles;
 import static com.example.musicplayer.services.ApplicationClass.ACTION_NEXT;
@@ -143,15 +141,17 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
             @Override
             public void run() {
                 super.run();
-                btn_prev();
+                activityMusicPlayBinding.prevBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        btn_prev();
+                    }
+                });
             }
         };
         prevThread.start();
     }
     public void btn_prev(){
-        activityMusicPlayBinding.prevBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 if (musicService.isPlaying()) {
                     musicService.stop();
                     musicService.release();
@@ -213,8 +213,7 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
                     }
                     activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
                 }
-            }
-        });
+
     }
 
     private void nextThreadBtn() {
@@ -222,15 +221,15 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
             @Override
             public void run() {
                 super.run();
-               btn_next();
+                activityMusicPlayBinding.nextBtn.setOnClickListener(view -> {
+                    btn_next();
+                });
             }
         };
         nextThread.start();
     }
     public void btn_next(){
-        activityMusicPlayBinding.nextBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+
                 if (musicService.isPlaying()) {
                     musicService.stop();
                     musicService.release();
@@ -289,8 +288,7 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
                     }
                     activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
                 }
-            }
-        });
+
     }
 
 
@@ -305,16 +303,15 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
             @Override
             public void run() {
                 super.run();
-                btn_play();
+                activityMusicPlayBinding.playBtn.setOnClickListener(view -> {
+                    btn_play();
+                });
 
             }
         };
         playThread.start();
     }
     public void btn_play(){
-        activityMusicPlayBinding.playBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 if (musicService.isPlaying()) {
                     activityMusicPlayBinding.playBtn.setImageResource(R.drawable.play_white);
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -350,8 +347,6 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
                         }
                     });
                 }
-            }
-        });
     }
 
     private String formattedTime(int currentPosition) {

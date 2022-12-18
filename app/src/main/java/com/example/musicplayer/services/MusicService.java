@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Switch;
 
 import androidx.annotation.Nullable;
@@ -57,6 +58,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             switch (actionName){
                 case "playPause":
                     if (actionName!=null){
+                        Log.d("playPause","PLAY & PAUSE");
                         actionPlaying.btn_play();
                     }
                     break;
@@ -67,7 +69,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                     }
                     break;
 
-                case "prev":
+                case "previous":
                     if (actionName!=null){
                         actionPlaying.btn_prev();
                     }
