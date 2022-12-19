@@ -20,8 +20,21 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tabLayout"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tabLayout"
+        android:layout_alignBottom="@id/frag_bottom_player"/>
 
+    <FrameLayout
+        android:id="@+id/frag_bottom_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
+        <fragment
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.example.musicplayer.Views.MiniNowPlaying"
+            tools:layout="@layout/fragment_mini_now_playing"/>
+
+    </FrameLayout>
 </RelativeLayout>
