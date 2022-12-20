@@ -11,6 +11,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -43,6 +44,9 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
     int position = -1;
     ActionPlaying actionPlaying;
     MediaSessionCompat mediaSessionCompat;
+    public static final String MUSIC_FILE_LAST_PLAYED ="Last Played";
+    public static final String MUSIC_FILE = "Stored Music";
+    public static final String SONG_NAME = "Song Name";
 
 
     @Override
@@ -133,9 +137,16 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
    public void seekTo(int position){
         mediaPlayer.seekTo(position);
     }
+
+
    public void createMediaPlayer(int positionInner){
         position = positionInner;
         uri = Uri.parse(musicFiles.get(position).getPath());
+
+        SharedPreferences.Editor editor = getSharedPreferences(MUSIC_FILE_LAST_PLAYED,MODE_PRIVATE).edit();
+        editor.putString(MUSIC_FILE,uri.toString());
+        editor.apply();
+
         mediaPlayer = MediaPlayer.create(getBaseContext(),uri);
     }
     public int getCurrentPosition(){
@@ -194,8 +205,6 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
                 .build();
                 startForeground(2,notification);
 
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//        notificationManager.notify(0,notification);
     }
     private byte[] getAlbumArt(String uri){
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();

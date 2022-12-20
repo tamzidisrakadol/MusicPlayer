@@ -5,6 +5,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
     static ArrayList<MusicFiles> albums = new ArrayList<>();
     ViewPagerFragmentAdapter viewPagerFragmentAdapter;
     private final String[] titles = new String[]{"List","Song"};
+    public static final String MUSIC_FILE_LAST_PLAYED ="Last Played";
+    public static final String MUSIC_FILE = "Stored Music";
+    public static boolean SHOW_MINI_PLAYER = false;
+    public static String PATH_TO_FRAG = null;
+    public static final String SONG_NAME = "Song Name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,5 +106,19 @@ public class MainActivity extends AppCompatActivity {
             cursor.close();
         }
         return tempAudioFile;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences preferences = getSharedPreferences(MUSIC_FILE_LAST_PLAYED,MODE_PRIVATE);
+        String value = preferences.getString(MUSIC_FILE,null);
+        if (value!=null){
+            SHOW_MINI_PLAYER = true;
+            PATH_TO_FRAG = value;
+        }else{
+            SHOW_MINI_PLAYER = false;
+            PATH_TO_FRAG=null;
+        }
     }
 }

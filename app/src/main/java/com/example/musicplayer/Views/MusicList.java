@@ -41,7 +41,6 @@ import java.util.ArrayList;
 
 public class MusicList extends Fragment implements OnClickItem {
     FragmentMusicListBinding fragmentMusicListBinding;
-  //  static ArrayList<MusicFiles> musicFiles;
     MusicListAdapter musicListAdapter;
 
     @Override
@@ -55,67 +54,11 @@ public class MusicList extends Fragment implements OnClickItem {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-     //   musicFiles = new ArrayList<>();
-       // runTimePermission();
         musicListAdapter = new MusicListAdapter(getContext(),musicFiles,this);
         fragmentMusicListBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL,false));
         fragmentMusicListBinding.recyclerView.setAdapter(musicListAdapter);
-//        if (!(musicFiles.size()<1)){
-//
-//        }
     }
 
-//    private void runTimePermission() {
-//        //to check permission
-//        Dexter.withContext(getContext())
-//                .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-//                .withListener(new PermissionListener() {
-//                    @Override
-//                    public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
-//
-//                        //read all audio files from phone
-//                        musicFiles = getAllAudio(getContext());
-//                    }
-//
-//                    @Override
-//                    public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-//                        permissionToken.continuePermissionRequest();
-//                    }
-//                }).check();
-//    }
-//
-//    public static ArrayList<MusicFiles> getAllAudio(Context context){
-//        ArrayList<MusicFiles> tempAudioFile = new ArrayList<>();
-//        Uri uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-//        String[] projection= {
-//                MediaStore.Audio.Media.ALBUM,
-//                MediaStore.Audio.Media.TITLE,
-//                MediaStore.Audio.Media.DURATION,
-//                MediaStore.Audio.Media.DATA,
-//                MediaStore.Audio.Media.ARTIST,
-//        };
-//        Cursor cursor = context.getContentResolver().query(uri,projection,null,null,null);
-//        if (cursor!=null){
-//            while (cursor.moveToNext()){
-//                String album = cursor.getString(0);
-//                String title= cursor.getString(1);
-//                String duration = cursor.getString(2);
-//                String path = cursor.getString(3);
-//                String artist = cursor.getString(4);
-//
-//                MusicFiles musicFiles = new MusicFiles(path,title,artist,album,duration);
-//                Log.e("Path : "+ path,"Album :"+ album );
-//                tempAudioFile.add(musicFiles);
-//            }
-//            cursor.close();
-//        }
-//        return tempAudioFile;
-//    }
 
     @Override
     public void onItemClick(int position) {

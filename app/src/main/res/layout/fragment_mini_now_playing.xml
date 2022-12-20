@@ -4,30 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#181919"
+    android:background="#2F3030"
     tools:context=".Views.MiniNowPlaying">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:background="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/miniPlayerImage"
         android:layout_width="@dimen/_50sdp"
         android:layout_height="@dimen/_50sdp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:elevation="@dimen/_10sdp"
+        android:scaleType="fitXY"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/miniSongName"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
-        android:text="@string/music_name"
-        android:maxLines="1"
         android:fontFamily="@font/adamina"
+        android:maxLines="1"
+        android:text="@string/music_name"
         android:textColor="@color/white"
         android:textSize="@dimen/_15sdp"
         app:layout_constraintStart_toEndOf="@+id/miniPlayerImage"
@@ -37,15 +48,15 @@
         android:id="@+id/miniPlayButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:background="@android:color/transparent"
+        android:contentDescription="@string/play_pause_btn"
         android:minWidth="48dp"
         android:minHeight="48dp"
         android:src="@drawable/mini_play"
         app:layout_constraintStart_toEndOf="@+id/miniSongName"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/play_pause_btn" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/miniNextButton"
