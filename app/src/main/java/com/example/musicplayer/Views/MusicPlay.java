@@ -389,7 +389,7 @@ public class MusicPlay extends AppCompatActivity implements ActionPlaying, Servi
         byte[] art = metadataRetriever.getEmbeddedPicture();
         Bitmap bitmap;
         if (art != null) {
-            Glide.with(this).asBitmap().load(art).into(activityMusicPlayBinding.circleImgView);
+            Glide.with(getApplicationContext()).asBitmap().load(art).into(activityMusicPlayBinding.circleImgView);
             bitmap = BitmapFactory.decodeByteArray(art, 0, art.length);
             Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
                 @Override

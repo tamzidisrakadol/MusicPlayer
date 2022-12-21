@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class MusicService extends Service implements MediaPlayer.OnCompletionListener {
     IBinder mBinder = new MyBinder();
     MediaPlayer mediaPlayer;
-    ArrayList<MusicFiles> musicFiles = new ArrayList<>();
+    public static ArrayList<MusicFiles> musicFiles = new ArrayList<>();
     Uri uri;
     int position = -1;
     ActionPlaying actionPlaying;
@@ -79,22 +79,15 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
         if (actionName!=null){
             switch (actionName){
                 case "playPause":
-                    if (actionName!=null){
-                        Log.d("playPause","PLAY & PAUSE");
-                        actionPlaying.btn_play();
-                    }
+                    playPauseBtnClicking();
                     break;
 
                 case "next":
-                    if (actionName!=null){
-                        actionPlaying.btn_next();
-                    }
+                   nextBtnClicking();
                     break;
 
                 case "previous":
-                    if (actionName!=null){
-                        actionPlaying.btn_prev();
-                    }
+                   prevBtnClicking();
                     break;
             }
         }
@@ -173,6 +166,24 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
             }
         }
     }
+    public void nextBtnClicking(){
+        if (actionPlaying!=null){
+            actionPlaying.btn_next();
+        }
+    }
+    public void playPauseBtnClicking(){
+        if (actionPlaying!=null){
+            Log.d("playPause","PLAY & PAUSE");
+            actionPlaying.btn_play();
+        }
+    }
+    public void prevBtnClicking(){
+        if (actionPlaying!=null){
+            actionPlaying.btn_prev();
+        }
+    }
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
    public void showNotification(int playPause){
         Intent intent = new Intent(this, MusicPlay.class);
