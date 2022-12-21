@@ -145,6 +145,7 @@ public class MusicService extends Service implements MediaPlayer.OnCompletionLis
 
         SharedPreferences.Editor editor = getSharedPreferences(MUSIC_FILE_LAST_PLAYED,MODE_PRIVATE).edit();
         editor.putString(MUSIC_FILE,uri.toString());
+        editor.putString(SONG_NAME,musicFiles.get(position).getTitle());
         editor.apply();
 
         mediaPlayer = MediaPlayer.create(getBaseContext(),uri);

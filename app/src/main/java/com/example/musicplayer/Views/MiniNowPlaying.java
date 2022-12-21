@@ -3,6 +3,7 @@ package com.example.musicplayer.Views;
 import static com.example.musicplayer.Views.MainActivity.PATH_TO_FRAG;
 import static com.example.musicplayer.Views.MainActivity.SHOW_MINI_PLAYER;
 import static com.example.musicplayer.Views.MainActivity.SONG_NAME;
+import static com.example.musicplayer.Views.MainActivity.SONG_NAME_TO_FRAG;
 
 import android.media.MediaMetadataRetriever;
 import android.os.Bundle;
@@ -47,7 +48,7 @@ public class MiniNowPlaying extends Fragment {
             if (PATH_TO_FRAG!=null){
                 byte[] art = getAlbumArt(PATH_TO_FRAG);
                 Glide.with(getContext()).load(art).into(fragmentMiniNowPlayingBinding.miniPlayerImage);
-                fragmentMiniNowPlayingBinding.miniSongName.setText(PATH_TO_FRAG);
+                fragmentMiniNowPlayingBinding.miniSongName.setText(SONG_NAME_TO_FRAG);
             }
         }
     }

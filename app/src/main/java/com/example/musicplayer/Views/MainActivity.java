@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String MUSIC_FILE = "Stored Music";
     public static boolean SHOW_MINI_PLAYER = false;
     public static String PATH_TO_FRAG = null;
+    public static String SONG_NAME_TO_FRAG = null;
     public static final String SONG_NAME = "Song Name";
 
     @Override
@@ -113,12 +114,16 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         SharedPreferences preferences = getSharedPreferences(MUSIC_FILE_LAST_PLAYED,MODE_PRIVATE);
         String value = preferences.getString(MUSIC_FILE,null);
+        String songName = preferences.getString(SONG_NAME,null);
         if (value!=null){
             SHOW_MINI_PLAYER = true;
             PATH_TO_FRAG = value;
+            SONG_NAME_TO_FRAG= songName;
         }else{
             SHOW_MINI_PLAYER = false;
             PATH_TO_FRAG=null;
+            SONG_NAME_TO_FRAG= songName;
+
         }
     }
 }
